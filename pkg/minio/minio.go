@@ -1,6 +1,7 @@
 package minio
 
 import (
+	"context"
 	"github.com/minio/minio-go"
 	"github.com/minio/minio-go/pkg/credentials"
 )
@@ -11,10 +12,11 @@ const (
 	AccessKeyID     = "Q3AM3UQ867SPQQA43P2F"                     //to be replaced with real ones
 	SecretAccessKey = "zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG" //to be replaced with real ones
 	UseSSL          = true
+	BucketName      = "" //to be replaced with real ones
 )
 
 //Get mini client
-func getMinioInstance() (*minio.Client, error) {
+func MinioInstance() (*minio.Client, error) {
 
 	Client, err := minio.New(Endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(AccessKeyID, SecretAccessKey, ""),
@@ -22,4 +24,13 @@ func getMinioInstance() (*minio.Client, error) {
 	})
 
 	return Client, err
+}
+
+//Upload file to mino
+func uploadFile(minoClient *minio.Client, filePath string, objectName string, contentType string) (minio.UploadInfo, error) {
+	ctx := context.Background()
+
+	n, err := minoClient.FPutObject(ctx, BucketName, objectName, filePath, minio.PutObjectOptions{ContentType: contentType})
+
+	return n, err
 }
