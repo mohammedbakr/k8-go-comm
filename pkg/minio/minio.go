@@ -9,8 +9,8 @@ import (
 //Mino settings and credentials
 const (
 	Endpoint        = "play.min.io"                              //to be replaced with real ones
-	AccessKeyID     = "Q3AM3UQ867SPQQA43P2F"                     //to be replaced with real ones
-	SecretAccessKey = "zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG" //to be replaced with real ones
+	AccessKeyID     = ""                     //to be replaced with real ones
+	SecretAccessKey = "" //to be replaced with real ones
 	UseSSL          = true
 	BucketName      = "" //to be replaced with real ones
 )
