@@ -3,6 +3,7 @@ package minio
 import (
 	"github.com/minio/minio-go"
 	"github.com/tkanos/gonfig"
+	"log"
 )
 
 //Minio configuration struct
@@ -24,6 +25,10 @@ func init() {
 func NewInstance() (*minio.Client, error) {
 
 	Client, err := minio.New(config.ENDPOINT, config.ACCESSKEYID, config.SECRETACCESSKEY, config.USESSL)
+
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	return Client, err
 }
