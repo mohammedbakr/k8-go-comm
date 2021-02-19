@@ -22,7 +22,7 @@ func main() {
 	queueName := "icap-adaptation"
 	exchange := "icap-adaptation"
 	routingKey := "icap-adaptation"
-	msgs, err := connection.NewQueueConsumer(queueName, exchange, routingKey)
+	msgs, err := rabbitmq.NewQueueConsumer(connection, queueName, exchange, routingKey)
 
 	// Consume
 	for d := range msgs {
