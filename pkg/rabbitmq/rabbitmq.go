@@ -32,7 +32,7 @@ func NewInstance(rabbitHost string, rabbitPort string, messagebrokeruser string,
 
 }
 
-func (connection *amqp.Connection) NewQueueConsumer(queueName string, exchange string, routingKey string) (<-chan amqp.Delivery, error) {
+func NewQueueConsumer(connection *amqp.Connection, queueName string, exchange string, routingKey string) (<-chan amqp.Delivery, error) {
 
 	ch, err := connection.Channel()
 	if err != nil {
@@ -60,7 +60,7 @@ func (connection *amqp.Connection) NewQueueConsumer(queueName string, exchange s
 
 }
 
-func (connection *amqp.Connection) NewQueuePublisher(exchange string) (*amqp.Channel, error) {
+func NewQueuePublisher(connection *amqp.Connection, exchange string) (*amqp.Channel, error) {
 
 	channel, err := connection.Channel()
 	if err != nil {
@@ -83,7 +83,7 @@ func (connection *amqp.Connection) NewQueuePublisher(exchange string) (*amqp.Cha
 
 }
 
-func (*amqp.Channel) PublishMessage(exchange string, routingKey string, message []byte) error {
+func PublishMessage(channel *amqp.Channel, exchange string, routingKey string, message []byte) error {
 
 	err := channel.Publish(
 		exchange,   // publish to an exchange
