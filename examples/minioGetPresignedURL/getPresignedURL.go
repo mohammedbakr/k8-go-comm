@@ -2,13 +2,17 @@ package main
 
 import (
 	"log"
+	"os"
 	"time"
 
 	minio "github.com/k8-proxy/k8-go-comm/pkg/minio"
 )
 
 func main() {
-	client := minio.NewMinioClient("play.minio.io", "Q3AM3UQ867SPQQA43P2F", "zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG", false)
+	endpoint := os.Getenv("MINIO_ENDPOINT")
+	accessKey := os.Getenv("ACCESS_KEY")
+	secretKey := os.Getenv("SECRET_KEY")
+	client := minio.NewMinioClient(endpoint, accessKey, secretKey, false)
 	presignedURL := minio.GetPresignedURLForObject(client, "test-bucket", "test.txt", time.Second*60*60*24)
 	log.Println(presignedURL)
 	return
