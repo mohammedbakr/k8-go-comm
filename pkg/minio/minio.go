@@ -4,6 +4,8 @@ import (
 	"github.com/minio/minio-go"
 	"github.com/tkanos/gonfig"
 	"log"
+	"net/url"
+	"time"
 )
 
 //Minio configuration struct
@@ -34,9 +36,30 @@ func NewInstance() (*minio.Client, error) {
 }
 
 //Upload file to mino
-func uploadFile(minoClient *minio.Client, bucketName string, filePath string, objectName string, contentType string) (int64, error) {
+func UploadFile(minoClient *minio.Client, bucketName string, filePath string, objectName string, contentType string) (int64, error) {
 
 	n, err := minoClient.FPutObject(bucketName, objectName, filePath, minio.PutObjectOptions{ContentType: contentType})
 
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	return n, err
+}
+
+//Generate signed url for file
+func GenerateSignedUrl(minioClient *minio.Client, bucketName string, objectName string) (*url.URL, error) {
+
+	// Set request parameters for content-disposition.
+	reqParams := make(url.Values)
+	reqParams.Set("response-content-disposition", "attachment; filename="+objectName+"")
+
+	// Generates a pre-signed url which expires in a day.
+	presignedUrl, err := minioClient.PresignedGetObject(bucketName, objectName, time.Second*24*60*60, reqParams)
+
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	return presignedUrl, err
 }
