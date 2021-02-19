@@ -16,3 +16,6 @@
 
 examples/consumer/consumer
 examples/producer/producer
+examples/minioGetObject/minioGetObject
+examples/minioGetPresignedURL/minioGetPresignedURL
+examples/minioUpload/minioUpload
