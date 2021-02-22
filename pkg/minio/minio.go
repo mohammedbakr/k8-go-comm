@@ -63,3 +63,12 @@ func GenerateSignedUrl(minioClient *minio.Client, bucketName string, objectName 
 
 	return presignedUrl, err
 }
+
+//Check if a bucket already exists
+func CheckIfBucketExists(minioClient *minio.Client, bucketName string) (bool, error) {
+
+	// Check to see if we already own this bucket
+	exists, errBucketExists := minioClient.BucketExists(bucketName)
+
+	return exists, errBucketExists
+}
