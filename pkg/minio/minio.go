@@ -72,3 +72,11 @@ func CheckIfBucketExists(minioClient *minio.Client, bucketName string) (bool, er
 
 	return exists, errBucketExists
 }
+
+//Create new bucket
+func CreateNewBucket(minioClient *minio.Client, bucketName string, location string) error {
+
+	err := minioClient.MakeBucket(bucketName, location)
+
+	return err
+}
