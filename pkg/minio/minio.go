@@ -20,7 +20,7 @@ var config = Configuration{}
 
 //Map config values
 func init() {
-	gonfig.GetConf("config.minio.json", &config)
+	gonfig.GetConf("../config.minio.json", &config)
 }
 
 //Create new minio instance
