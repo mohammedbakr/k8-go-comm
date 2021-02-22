@@ -70,6 +70,10 @@ func CheckIfBucketExists(minioClient *minio.Client, bucketName string) (bool, er
 	// Check to see if we already own this bucket
 	exists, errBucketExists := minioClient.BucketExists(bucketName)
 
+	if errBucketExists != nil {
+		log.Fatalln(errBucketExists)
+	}
+
 	return exists, errBucketExists
 }
 
@@ -77,6 +81,10 @@ func CheckIfBucketExists(minioClient *minio.Client, bucketName string) (bool, er
 func CreateNewBucket(minioClient *minio.Client, bucketName string, location string) error {
 
 	err := minioClient.MakeBucket(bucketName, location)
+
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	return err
 }
