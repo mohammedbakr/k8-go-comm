@@ -36,9 +36,9 @@ func NewInstance() (*minio.Client, error) {
 }
 
 //Upload file to mino
-func UploadFile(minoClient *minio.Client, bucketName string, filePath string, objectName string, contentType string) (int64, error) {
+func UploadFile(minioClient *minio.Client, bucketName string, filePath string, objectName string, contentType string) (int64, error) {
 
-	n, err := minoClient.FPutObject(bucketName, objectName, filePath, minio.PutObjectOptions{ContentType: contentType})
+	n, err := minioClient.FPutObject(bucketName, objectName, filePath, minio.PutObjectOptions{ContentType: contentType})
 
 	if err != nil {
 		log.Fatalln(err)
