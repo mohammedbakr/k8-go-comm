@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"path/filepath"
 	"time"
 
@@ -58,7 +59,7 @@ func DeleteObjectInMinio(client *minio.Client, bucketName string, objectName str
 }
 
 // GetPresignedURLForObject - Get signed url for object
-func GetPresignedURLForObject(client *minio.Client, bucketName string, objectName string, expiresIn time.Duration) *url.URL {
+func GetPresignedURLForObject(client *minio.Client, bucketName string, objectName string, expiresIn time.Duration) (*url.URL, error) {
 	// Set request parameters for content-disposition.
 	reqParams := make(url.Values)
 	// reqParams.Set("response-content-disposition", "attachment; filename=\"your-filename.txt\"")
@@ -66,19 +67,22 @@ func GetPresignedURLForObject(client *minio.Client, bucketName string, objectNam
 	presignedURL, err := client.PresignedGetObject(context.Background(), bucketName, objectName, expiresIn, reqParams)
 	if err != nil {
 		fmt.Println(err)
-		return presignedURL
+		return presignedURL, err
 	}
-	return presignedURL
+	return presignedURL, err
 }
 
-func UploadAndReturnURL(client *minio.Client, bucketName string, fileFullPath string, expiresIn time.Duration) *url.URL {
+func UploadAndReturnURL(client *minio.Client, bucketName string, fileFullPath string, expiresIn time.Duration) (*url.URL, error) {
 
-	contentType := getContentType(fileFullPath)
-	objectName := filepath.Base(fileFullPath)
-	_, err := minioClient.FPutObject(context.Background(), bucketName, objectName, fileFullPath, minio.PutObjectOptions{ContentType: contentType})
+	contentType, err := getContentType(fileFullPath)
 	if err != nil {
 		log.Fatalln(err)
-		return *url.URL{}, err
+		return &url.URL{}, err
+	}
+	objectName := filepath.Base(fileFullPath)
+	_, err = client.FPutObject(context.Background(), bucketName, objectName, fileFullPath, minio.PutObjectOptions{ContentType: contentType})
+	if err != nil {
+		return &url.URL{}, err
 	}
 
 	return GetPresignedURLForObject(client, bucketName, objectName, expiresIn)
@@ -86,10 +90,15 @@ func UploadAndReturnURL(client *minio.Client, bucketName string, fileFullPath st
 
 func getContentType(fileFullPath string) (string, error) {
 
+	out, err := os.Open(fileFullPath)
+	if err != nil {
+		return "", err
+	}
+
 	// Only the first 512 bytes are used to sniff the content type.
 	buffer := make([]byte, 512)
 
-	_, err := out.Read(buffer)
+	_, err = out.Read(buffer)
 	if err != nil {
 		return "", err
 	}
