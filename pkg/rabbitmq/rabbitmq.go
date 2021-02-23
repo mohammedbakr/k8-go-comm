@@ -7,7 +7,15 @@ import (
 	"github.com/streadway/amqp"
 )
 
-func NewInstance(rabbitHost string, rabbitPort string, messagebrokeruser string, messagebrokerpassword string) (*amqp.Connection, error) {
+type RMQConnection struct {
+	*amqp.Connection
+}
+
+type RMQChannel struct {
+	*amqp.Channel
+}
+
+func NewInstance(rabbitHost string, rabbitPort string, messagebrokeruser string, messagebrokerpassword string) (RMQConnection, error) {
 
 	if messagebrokeruser == "" {
 		messagebrokeruser = "guest"
@@ -25,14 +33,14 @@ func NewInstance(rabbitHost string, rabbitPort string, messagebrokeruser string,
 	}
 	conn, err := amqp.Dial(amqpUrl.String())
 	if err != nil {
-		return nil, err
+		return RMQConnection{}, err
 	}
 
-	return conn, err
+	return RMQConnection{conn}, err
 
 }
 
-func (connection *amqp.Connection) NewQueueConsumer(queueName string, exchange string, routingKey string) (<-chan amqp.Delivery, error) {
+func (connection RMQConnection) NewQueueConsumer(queueName string, exchange string, routingKey string) (<-chan amqp.Delivery, error) {
 
 	ch, err := connection.Channel()
 	if err != nil {
@@ -60,11 +68,11 @@ func (connection *amqp.Connection) NewQueueConsumer(queueName string, exchange s
 
 }
 
-func (connection *amqp.Connection) NewQueuePublisher(exchange string) (*amqp.Channel, error) {
+func (connection RMQConnection) NewQueuePublisher(exchange string) (RMQChannel, error) {
 
 	channel, err := connection.Channel()
 	if err != nil {
-		return nil, err
+		return RMQChannel{}, err
 	}
 
 	if err := channel.ExchangeDeclare(
@@ -76,14 +84,14 @@ func (connection *amqp.Connection) NewQueuePublisher(exchange string) (*amqp.Cha
 		false,    // noWait
 		nil,      // arguments
 	); err != nil {
-		return nil, err
+		return RMQChannel{}, err
 	}
 
-	return channel, nil
+	return RMQChannel{channel}, nil
 
 }
 
-func (*amqp.Channel) PublishMessage(exchange string, routingKey string, message []byte) error {
+func (channel RMQChannel) PublishMessage(exchange string, routingKey string, message []byte) error {
 
 	err := channel.Publish(
 		exchange,   // publish to an exchange
