@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"net/http"
 	"net/url"
+	"path/filepath"
 	"time"
 
 	minio "github.com/minio/minio-go/v7"
@@ -67,4 +69,34 @@ func GetPresignedURLForObject(client *minio.Client, bucketName string, objectNam
 		return presignedURL
 	}
 	return presignedURL
+}
+
+func UploadAndReturnURL(client *minio.Client, bucketName string, fileFullPath string, expiresIn time.Duration) *url.URL {
+
+	contentType := getContentType(fileFullPath)
+	objectName := filepath.Base(fileFullPath)
+	_, err := minioClient.FPutObject(context.Background(), bucketName, objectName, fileFullPath, minio.PutObjectOptions{ContentType: contentType})
+	if err != nil {
+		log.Fatalln(err)
+		return *url.URL{}, err
+	}
+
+	return GetPresignedURLForObject(client, bucketName, objectName, expiresIn)
+}
+
+func getContentType(fileFullPath string) (string, error) {
+
+	// Only the first 512 bytes are used to sniff the content type.
+	buffer := make([]byte, 512)
+
+	_, err := out.Read(buffer)
+	if err != nil {
+		return "", err
+	}
+
+	// Use the net/http package's handy DectectContentType function. Always returns a valid
+	// content-type by returning "application/octet-stream" if no others seemed to match.
+	contentType := http.DetectContentType(buffer)
+
+	return contentType, nil
 }

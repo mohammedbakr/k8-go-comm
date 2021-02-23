@@ -15,7 +15,7 @@ type RMQChannel struct {
 	*amqp.Channel
 }
 
-func NewInstance(rabbitHost string, rabbitPort string, messagebrokeruser string, messagebrokerpassword string) (RMQConnection, error) {
+func NewInstance(rabbitHost string, rabbitPort string, messagebrokeruser string, messagebrokerpassword string) (*amqp.Connection, error) {
 
 	if messagebrokeruser == "" {
 		messagebrokeruser = "guest"
@@ -33,10 +33,10 @@ func NewInstance(rabbitHost string, rabbitPort string, messagebrokeruser string,
 	}
 	conn, err := amqp.Dial(amqpUrl.String())
 	if err != nil {
-		return RMQConnection{}, err
+		return conn, err
 	}
 
-	return RMQConnection{conn}, err
+	return conn, err
 
 }
 
@@ -72,7 +72,7 @@ func NewQueuePublisher(connection *amqp.Connection, exchange string) (*amqp.Chan
 
 	channel, err := connection.Channel()
 	if err != nil {
-		return RMQChannel{}, err
+		return channel, err
 	}
 
 	if err := channel.ExchangeDeclare(
@@ -84,10 +84,10 @@ func NewQueuePublisher(connection *amqp.Connection, exchange string) (*amqp.Chan
 		false,    // noWait
 		nil,      // arguments
 	); err != nil {
-		return RMQChannel{}, err
+		return channel, err
 	}
 
-	return RMQChannel{channel}, nil
+	return channel, nil
 
 }
 
