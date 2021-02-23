@@ -21,10 +21,10 @@ func main() {
 	// Start a producer
 	exchange := "icap-adaptation"
 	routingKey := "icap-adaptation"
-	publisher, err := connection.NewQueuePublisher(exchange)
+	publisher, err := rabbitmq.NewQueuePublisher(connection, exchange)
 
 	// Publish a message
-	err = publisher.PublishMessage(exchange, routingKey, []byte("test"))
+	err = rabbitmq.PublishMessage(publisher, exchange, routingKey, []byte("test"))
 	if err != nil {
 		log.Fatalf("%s", err)
 	}
