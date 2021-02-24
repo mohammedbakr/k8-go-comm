@@ -91,7 +91,7 @@ func NewQueuePublisher(connection *amqp.Connection, exchange string) (*amqp.Chan
 
 }
 
-func PublishMessage(channel *amqp.Channel, exchange string, routingKey string, message []byte) error {
+func PublishMessage(channel *amqp.Channel, exchange string, routingKey string, header amqp.Table, message []byte) error {
 
 	err := channel.Publish(
 		exchange,   // publish to an exchange
