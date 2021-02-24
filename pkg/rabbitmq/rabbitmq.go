@@ -7,6 +7,14 @@ import (
 	"github.com/streadway/amqp"
 )
 
+type RMQConnection struct {
+	*amqp.Connection
+}
+
+type RMQChannel struct {
+	*amqp.Channel
+}
+
 func NewInstance(rabbitHost string, rabbitPort string, messagebrokeruser string, messagebrokerpassword string) (*amqp.Connection, error) {
 
 	if messagebrokeruser == "" {
@@ -25,7 +33,7 @@ func NewInstance(rabbitHost string, rabbitPort string, messagebrokeruser string,
 	}
 	conn, err := amqp.Dial(amqpUrl.String())
 	if err != nil {
-		return nil, err
+		return conn, err
 	}
 
 	return conn, err
@@ -64,7 +72,7 @@ func NewQueuePublisher(connection *amqp.Connection, exchange string) (*amqp.Chan
 
 	channel, err := connection.Channel()
 	if err != nil {
-		return nil, err
+		return channel, err
 	}
 
 	if err := channel.ExchangeDeclare(
@@ -76,14 +84,14 @@ func NewQueuePublisher(connection *amqp.Connection, exchange string) (*amqp.Chan
 		false,    // noWait
 		nil,      // arguments
 	); err != nil {
-		return nil, err
+		return channel, err
 	}
 
 	return channel, nil
 
 }
 
-func PublishMessage(channel *amqp.Channel, exchange string, routingKey string, message []byte) error {
+func PublishMessage(channel *amqp.Channel, exchange string, routingKey string, header amqp.Table, message []byte) error {
 
 	err := channel.Publish(
 		exchange,   // publish to an exchange
