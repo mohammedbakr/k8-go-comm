@@ -109,3 +109,25 @@ func getContentType(fileFullPath string) (string, error) {
 
 	return contentType, nil
 }
+
+func DownloadObject(cleanPresignedURL string, outputFileLocation string) error {
+
+	// Get the data
+	resp, err := http.Get(cleanPresignedURL)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	// Create the file
+	out, err := os.Create(outputFileLocation)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	// Write the body to file
+	_, err = io.Copy(out, resp.Body)
+	return err
+
+}

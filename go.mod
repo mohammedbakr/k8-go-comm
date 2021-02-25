@@ -1,4 +1,4 @@
-module github.com/k8-proxy/k8-go-comm
+module github.com/azopat/k8-go-comm
 
 go 1.14
 
