@@ -16,20 +16,15 @@ import (
 )
 
 // NewMinioClient - returns new minio client
-func NewMinioClient(endpoint string, accessKeyID string, secretAccessKey string, useSSL bool) *minio.Client {
-	// Set request parameters for content-disposition.
-	reqParams := make(url.Values)
-	reqParams.Set("response-content-disposition", "attachment; filename=\"your-filename.txt\"")
+func NewMinioClient(endpoint string, accessKeyID string, secretAccessKey string, useSSL bool) (*minio.Client, error) {
+
 	// Initialize minio client object.
 	minioClient, err := minio.New(endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(accessKeyID, secretAccessKey, ""),
 		Secure: useSSL,
 	})
-	if err != nil {
-		log.Fatalln(err)
-	}
 
-	return minioClient
+	return minioClient, err
 }
 
 // UploadFileToMinio - uploads file to minio
@@ -108,6 +103,28 @@ func getContentType(fileFullPath string) (string, error) {
 	contentType := http.DetectContentType(buffer)
 
 	return contentType, nil
+}
+
+func DownloadObject(cleanPresignedURL string, outputFileLocation string) error {
+
+	// Get the data
+	resp, err := http.Get(cleanPresignedURL)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	// Create the file
+	out, err := os.Create(outputFileLocation)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	// Write the body to file
+	_, err = io.Copy(out, resp.Body)
+	return err
+
 }
 
 //Check if a bucket already exists
