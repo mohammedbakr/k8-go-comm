@@ -12,7 +12,11 @@ func main() {
 	endpoint := os.Getenv("MINIO_ENDPOINT")
 	accessKey := os.Getenv("ACCESS_KEY")
 	secretKey := os.Getenv("SECRET_KEY")
-	client := minio.NewMinioClient(endpoint, accessKey, secretKey, false)
+	client, err := minio.NewMinioClient(endpoint, accessKey, secretKey, false)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 	fileContent := []byte("test")
 	uploadInfo, err := minio.UploadFileToMinio(client, "test-bucket", "test.txt", bytes.NewReader(fileContent))
 	if err != nil {
