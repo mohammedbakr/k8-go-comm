@@ -30,22 +30,22 @@ docker run -d --hostname <your_host_name> --name <your_container_name> -p 15672:
 
 ### Producer
 
-To start a connectoin with RabbitMQ and publish a message, please check [producer folder](producer/README.MD)
+To start a connectoin with RabbitMQ and publish a message, please check [producer folder](examples/producer)
 
 ### Consumer
 
-To start a connection and consume the message that was published, please check [consumer directory](consumer/README.md)
+To start a connection and consume the message that was published, please check [consumer directory](examples/consumer)
 
 ## MinIO
 
 ### Make bucket and upload file
 
-To start a connection and upload a file, please check [minioUploead directory](minioUploead/README.md)
+To start a connection and upload a file, please check [minioUploead directory](examples/minioUploead)
 
 ### Get the object from the bucket
 
-To start a connection and get a file from specific bucket, please check [minioGetObject directory](minioGetObject/README.md)
+To start a connection and get a file from specific bucket, please check [minioGetObject directory](examples/minioGetObject)
 
 ### Get the presigned URL
 
-To start a connection and get the presigned URL of the file you uploaded, please check [minioGetPresignedURL directory](minioGetPresignedURL/README.md)
+To start a connection and get the presigned URL of the file you uploaded, please check [minioGetPresignedURL directory](examples/minioGetPresignedURL)
