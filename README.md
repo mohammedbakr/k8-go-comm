@@ -14,8 +14,8 @@ Run Standalone MinIO on Docker.
 
 ```
 docker run -p 9000:9000 \
-  -e "MINIO_ROOT_USER=AKIAIOSFODNN7EXAMPLE" \
-  -e "MINIO_ROOT_PASSWORD=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY" \
+  -e "MINIO_ROOT_USER=<your_minio_root_user>" \
+  -e "MINIO_ROOT_PASSWORD=<your_minio_root_password>" \
   minio/minio server /data
 
 ```
@@ -30,7 +30,7 @@ docker run -d --hostname <your_host_name> --name <your_container_name> -p 15672:
 
 ### Producer
 
-To start a connectoin with RabbitMQ and publish a message, please check [producer folder](examples/producer)
+To start a connection with RabbitMQ and publish a message, please check [producer folder](examples/producer)
 
 ### Consumer
 
