@@ -24,7 +24,7 @@ func main() {
 	publisher, err := rabbitmq.NewQueuePublisher(connection, exchange)
 
 	// Publish a message
-	err = rabbitmq.PublishMessage(publisher, exchange, routingKey, []byte("test"))
+	err = rabbitmq.PublishMessage(publisher, exchange, routingKey, nil, []byte("test"))
 	if err != nil {
 		log.Fatalf("%s", err)
 	}
