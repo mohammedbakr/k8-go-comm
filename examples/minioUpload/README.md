@@ -4,7 +4,7 @@ Upload a file contains the word "test" whither the bucket exists or not at this 
 
 ## Environment
 
-Copy/Rename .en.example to .env<br>
+Copy/Rename .env.example to .env<br>
 Change the values of the variables to your need in .env file.<br>
 
 ## Run

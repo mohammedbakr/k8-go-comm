@@ -4,7 +4,7 @@ Get getPresignedURL of the object from an existing bucket.
 
 ## Environment
 
-Copy/Rename .en.example to .env<br>
+Copy/Rename .env.example to .env<br>
 Change the values of the variables to your need in .env file.<br>
 
 ## Run
