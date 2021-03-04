@@ -40,7 +40,7 @@ To start a connection and consume the message that was published, please check [
 
 ### Make bucket and upload file
 
-To start a connection and upload a file, please check [minioUploead directory](examples/minioUploead)
+To start a connection and upload a file, please check [minioUpload directory](examples/minioUpload)
 
 ### Get the object from the bucket
 
