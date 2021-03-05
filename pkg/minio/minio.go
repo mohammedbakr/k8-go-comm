@@ -29,6 +29,20 @@ func NewMinioClient(endpoint string, accessKeyID string, secretAccessKey string,
 
 // UploadFileToMinio - uploads file to minio
 func UploadFileToMinio(client *minio.Client, bucketName string, objectName string, reader io.Reader) (minio.UploadInfo, error) {
+	found, err := client.BucketExists(context.Background(), bucketName)
+	if err != nil {
+		log.Fatalln(err)
+		return minio.UploadInfo{}, err
+	}
+	if !found {
+		// Create a bucket at region 'us-east-1'
+		err = client.MakeBucket(context.Background(), bucketName, minio.MakeBucketOptions{Region: "us-east-1"})
+		if err != nil {
+			log.Fatalln(err)
+			return minio.UploadInfo{}, err
+		}
+	}
+
 	uploadInfo, err := client.PutObject(context.Background(), bucketName, objectName, reader, -1, minio.PutObjectOptions{ContentType: "text/plain"})
 	if err != nil {
 		log.Fatalln(err)
@@ -67,7 +81,21 @@ func GetPresignedURLForObject(client *minio.Client, bucketName string, objectNam
 	return presignedURL, err
 }
 
+// UploadAndReturnURL to upload a file with exp date and return its URL
 func UploadAndReturnURL(client *minio.Client, bucketName string, fileFullPath string, expiresIn time.Duration) (*url.URL, error) {
+	found, err := client.BucketExists(context.Background(), bucketName)
+	if err != nil {
+		log.Fatalln(err)
+		return &url.URL{}, err
+	}
+	if !found {
+		// Create a bucket at region 'us-east-1'
+		err = client.MakeBucket(context.Background(), bucketName, minio.MakeBucketOptions{Region: "us-east-1"})
+		if err != nil {
+			log.Fatalln(err)
+			return &url.URL{}, err
+		}
+	}
 
 	contentType, err := getContentType(fileFullPath)
 	if err != nil {
@@ -105,6 +133,7 @@ func getContentType(fileFullPath string) (string, error) {
 	return contentType, nil
 }
 
+// DownloadObject to download theoject
 func DownloadObject(cleanPresignedURL string, outputFileLocation string) error {
 
 	// Get the data
@@ -125,29 +154,4 @@ func DownloadObject(cleanPresignedURL string, outputFileLocation string) error {
 	_, err = io.Copy(out, resp.Body)
 	return err
 
-}
-
-//Check if a bucket already exists
-func CheckIfBucketExists(minioClient *minio.Client, bucketName string) (bool, error) {
-
-	// Check to see if we already own this bucket
-	exists, errBucketExists := minioClient.BucketExists(bucketName)
-
-	if errBucketExists != nil {
-		log.Fatalln(errBucketExists)
-	}
-
-	return exists, errBucketExists
-}
-
-//Create new bucket
-func CreateNewBucket(minioClient *minio.Client, bucketName string, location string) error {
-
-	err := minioClient.MakeBucket(bucketName, location)
-
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	return err
 }
