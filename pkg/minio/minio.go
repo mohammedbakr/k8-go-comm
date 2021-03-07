@@ -142,10 +142,10 @@ func DownloadObject(cleanPresignedURL string, outputFileLocation string) error {
 
 }
 
-func CheckIfBucketExists(minioClient *minio.Client, bucketName string) (bool, error) {
+func CheckIfBucketExists(client *minio.Client, bucketName string) (bool, error) {
 
 	// Check to see if we already own this bucket
-	exists, errBucketExists := minioClient.BucketExists(context.Background(), bucketName)
+	exists, errBucketExists := client.BucketExists(context.Background(), bucketName)
 
 	if errBucketExists != nil {
 		log.Fatalln(errBucketExists)
@@ -155,9 +155,9 @@ func CheckIfBucketExists(minioClient *minio.Client, bucketName string) (bool, er
 }
 
 //Create new bucket
-func CreateNewBucket(minioClient *minio.Client, bucketName string) error {
+func CreateNewBucket(client *minio.Client, bucketName string) error {
 	opt := minio.MakeBucketOptions{Region: "us-east-1"}
-	err := minioClient.MakeBucket(context.Background(), bucketName, opt)
+	err := client.MakeBucket(context.Background(), bucketName, opt)
 
 	if err != nil {
 		log.Fatalln(err)
