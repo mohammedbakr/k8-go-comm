@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"log"
 	"os"
 
@@ -14,19 +13,26 @@ func init() {
 }
 
 func main() {
-	endpoint := os.Getenv("MINIO_ENDPOINT")
-	accessKey := os.Getenv("ACCESS_KEY")
-	secretKey := os.Getenv("SECRET_KEY")
-	bucketName := os.Getenv("BUCKET_NAME")
-	fileName := os.Getenv("FILE_NAME")
+	endpoint := "localhost:9000"
+	accessKey := "minioadmin"
+	secretKey := "minioadmin"
+	bucketName := "test"
+	//PATHPDF := "./sampledata/file.pdf"
+	//PATHZIP := "./sampledata/file.zip"
+	fileName := "Screenshot"
+	//ZIPNAME := "file.zip"
 
 	client, err := minio.NewMinioClient(endpoint, accessKey, secretKey, false)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	fileContent := []byte("test")
-	uploadInfo, err := minio.UploadFileToMinio(client, bucketName, fileName, bytes.NewReader(fileContent))
+	fileContent, err := os.Open("/home/ibrahim/Screenshot")
+	if err != nil {
+		log.Println(err)
+
+	}
+	uploadInfo, err := minio.UploadFileToMinio(client, bucketName, fileName, fileContent)
 	if err != nil {
 		log.Println(err)
 		return
