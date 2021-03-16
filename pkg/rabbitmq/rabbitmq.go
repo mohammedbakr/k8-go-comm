@@ -40,14 +40,14 @@ func NewInstance(rabbitHost string, rabbitPort string, messagebrokeruser string,
 
 }
 
-func NewQueueConsumer(connection *amqp.Connection, queueName string, exchange string, routingKey string) (<-chan amqp.Delivery, *amqp.Channel, error) {
+func NewQueueConsumer(connection *amqp.Connection, queueName string, exchange, exchangetype string, routingKey string, header amqp.Table) (<-chan amqp.Delivery, *amqp.Channel, error) {
 
 	ch, err := connection.Channel()
 	if err != nil {
 		return nil, nil, err
 	}
 
-	err = ch.ExchangeDeclare(exchange, "direct", true, false, false, false, nil)
+	err = ch.ExchangeDeclare(exchange, exchangetype, true, false, false, false, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -57,7 +57,7 @@ func NewQueueConsumer(connection *amqp.Connection, queueName string, exchange st
 		return nil, nil, err
 	}
 
-	err = ch.QueueBind(q.Name, routingKey, exchange, false, nil)
+	err = ch.QueueBind(q.Name, routingKey, exchange, false, header)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -68,7 +68,7 @@ func NewQueueConsumer(connection *amqp.Connection, queueName string, exchange st
 
 }
 
-func NewQueuePublisher(connection *amqp.Connection, exchange string) (*amqp.Channel, error) {
+func NewQueuePublisher(connection *amqp.Connection, exchange, exchanetype string) (*amqp.Channel, error) {
 
 	channel, err := connection.Channel()
 	if err != nil {
@@ -76,13 +76,13 @@ func NewQueuePublisher(connection *amqp.Connection, exchange string) (*amqp.Chan
 	}
 
 	if err := channel.ExchangeDeclare(
-		exchange, // name
-		"direct", // type
-		true,     // durable
-		false,    // auto-deleted
-		false,    // internal
-		false,    // noWait
-		nil,      // arguments
+		exchange,    // name
+		exchanetype, // type
+		true,        // durable
+		false,       // auto-deleted
+		false,       // internal
+		false,       // noWait
+		nil,         // arguments
 	); err != nil {
 		return channel, err
 	}

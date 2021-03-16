@@ -41,12 +41,12 @@ func UploadFileToMinio(client *minio.Client, bucketName string, objectName strin
 	size := int64(len(f))
 
 	conttype = http.DetectContentType(f[:511])
-	log.Println(conttype)
+
 	reader = bytes.NewReader(f)
 
 	uploadInfo, err := client.PutObject(context.Background(), bucketName, objectName, reader, size, minio.PutObjectOptions{ContentType: conttype})
 	if err != nil {
-		log.Fatalln(err)
+		log.Println(err)
 		return uploadInfo, err
 	}
 	return uploadInfo, nil
@@ -87,7 +87,7 @@ func UploadAndReturnURL(client *minio.Client, bucketName string, fileFullPath st
 
 	contentType, err := getContentType(fileFullPath)
 	if err != nil {
-		log.Fatalln(err)
+		log.Println(err)
 		return &url.URL{}, err
 	}
 	objectName := filepath.Base(fileFullPath)
@@ -150,7 +150,7 @@ func CheckIfBucketExists(client *minio.Client, bucketName string) (bool, error) 
 	exists, errBucketExists := client.BucketExists(context.Background(), bucketName)
 
 	if errBucketExists != nil {
-		log.Fatalln(errBucketExists)
+		log.Println(errBucketExists)
 	}
 
 	return exists, errBucketExists
@@ -162,7 +162,7 @@ func CreateNewBucket(client *minio.Client, bucketName string) error {
 	err := client.MakeBucket(context.Background(), bucketName, opt)
 
 	if err != nil {
-		log.Fatalln(err)
+		log.Println(err)
 	}
 
 	return err
